@@ -1,0 +1,14 @@
+.ch-save-editor-settings {
+    width: 32px;
+    height: 32px;
+    position: absolute;
+    cursor: pointer;
+    background-image:url('chrome-extension://__MSG_@@extension_id__/img/save-editor-settings.png');
+}
+.ch-save-editor-settings.discard {
+    background-image:url('chrome-extension://__MSG_@@extension_id__/img/discard-editor-settings.png');
+}
+.ch-save-editor-settings:active {
+    margin-top: 1px;
+    margin-left: 1px;
+}

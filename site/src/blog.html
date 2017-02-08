@@ -1,0 +1,46 @@
+---
+layout: main
+permalink: /blog/
+
+title: Read latest news and productivity tips in our blog
+
+meta:
+    description: Our blog contains information about our latest news productivity tips about CodeHighlight using.
+    keywords: code highlight blog, source highlight, source code, highlight feature, source editor, code editor, blog
+---
+<section class="bg-color3 text-center blog" itemscope itemtype="http://schema.org/Blog">
+    <div class="container">
+        <h1>CodeHighlight Blog</h1>
+        <h4 class="sub-title">Our news and productivity tips</h4>
+        <ul class="time-line">
+            {% for post in site.posts %}
+            <li>
+                <div class="post" itemscope itemtype="http://schema.org/BlogPosting">
+                    <div class="post-media">
+                        <a href="{{ post.url | relative_url }}">
+                            <img itemprop="image" src="{{ post.image.url }}" alt="{{ post.image.alt }}"
+                                 class="img-responsive">
+                        </a>
+                    </div>
+                    <div class="post-content">
+                        <h4 class="title" itemprop="name headline">
+                            <a href="{{ post.url | relative_url }}" itemprop="url">{{ post.title | escape }}</a>
+                        </h4>
+                        <div class="post-desc" itemprop="description">
+                            {{post.content|strip_html|truncatewords: 25|replace: '...', ''}}
+                            <a class="read-more" href="{{ post.url | relative_url }}" title="Read more...">•••</a>
+                        </div>
+                        <div class="post-info">
+                            <div class="date" itemprop="datePublished"><i class="icon icon-clock"></i>{{ post.date |
+                                date: "%b %-d, %Y" }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <br>
+    <p class="rss-subscribe">Subscribe <a href="{{ "/feed.xml"}}">via RSS</a></p>
+</section>

@@ -1,0 +1,15 @@
+{
+  "name": "Site",
+  "version": "1.0.0",
+  "authors": [
+    "devunion <devunion@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

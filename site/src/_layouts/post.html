@@ -1,0 +1,43 @@
+---
+layout: main
+---
+<section class="inner-page">
+    <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+        <meta itemprop="url" content="{{url}}">
+        <meta itemprop="discussionUrl" content="{{url}}">
+        <meta itemprop="author" content="CodeHighlight">
+        <meta itemprop="headline" content="{{title|escape}}">
+        <meta itemprop="description" content="{{description|escape}}">
+        <meta itemprop="keywords" content="{{tags}}">
+        <meta itemprop="image" content="{{image.url}}">
+        <meta itemprop="thumbnailUrl" content="{{image.url}}">
+
+        <div class="container">
+            <div class="row">
+                <div class="md-col-10 single-post">
+                    <div class="post-media">
+                        <img src="{{page.image.url}}" alt="{{page.image.alt}}" class="img-responsive">
+                    </div>
+                    <div class="post-content">
+                        <h1 class="title" itemprop="name headline">{{ page.title | escape }}</h1>
+                        <div class="post-info">
+                            <div class="date">
+                                <time datetime="{{ page.date | date_to_xmlschema }}"
+                                      itemprop="dateCreated datePublished dateModified">
+                                    <i class="icon icon-clock"></i> {{page.date |date: "%b %-d, %Y"}}
+                                </time>
+                            </div>
+                        </div>
+                        <div class="post-content text-justify" itemprop="articleBody">
+                            {{ content }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% if page.comments %}
+            {% include disqus_comments.html %}
+            {% endif %}
+
+        </div>
+    </article>
+</section>
