@@ -8,12 +8,14 @@ var gulp = require('gulp'),
     minifyHTML = require('gulp-minify-html'),
     imagemin = require('gulp-imagemin'),
     pngquant = require('imagemin-pngquant'),
-    rimraf = require('rimraf'),
+    del = require('del'),
     browserSync = require("browser-sync"),
     gutil = require('gulp-util'),
     cp = require('child_process'),
     sitemap = require('gulp-sitemap'),
-    reload = browserSync.reload;
+    reload = browserSync.reload,
+    ftp = require('gulp-ftp'),
+    privateConfig = require('./gulp-config.json');
 
 var path = {
     build: {
@@ -27,7 +29,8 @@ var path = {
     },
     jekyll: {
         build: 'jekyll_build/',
-        blog: 'jekyll_build/blog/'
+        blog: 'jekyll_build/blog/',
+        rss: 'jekyll_build/*.xml'
     },
     src: {
         html: 'src/*.html',
@@ -73,12 +76,17 @@ function filterHtml(path) {
     return filter(path, '**/*.html');
 }
 
+function filterAny(path) {
+    return filter(path, '**/*.*');
+}
+
 gulp.task('webserver', function () {
     browserSync(config);
 });
 
-gulp.task('clean', function (cb) {
-    rimraf(path.clean, cb);
+
+gulp.task('clean', function () {
+    return del.sync(path.clean);
 });
 
 /**
@@ -89,22 +97,24 @@ gulp.task('jekyll:build', function (done) {
 });
 
 gulp.task('html:copy_blog', ['jekyll:build'], function () {
-    console.log('html:copy_blog: ' + filterHtml(path.jekyll.blog));
-
-    gulp.src(filterHtml(path.jekyll.blog))
+    return gulp.src(filterHtml(path.jekyll.blog))
         .pipe(minifyHTML({quotes: true}))
         .pipe(gulp.dest(path.build.blog));
 });
+gulp.task('rss:copy_feed', ['jekyll:build'], function () {
+    return gulp.src(path.jekyll.rss)
+        .pipe(gulp.dest(path.build.html));
+});
 
 gulp.task('html:build', ['html:copy_blog'], function () {
-    gulp.src(filterHtml(path.jekyll.build))
+    return gulp.src(filterHtml(path.jekyll.build))
         .pipe(minifyHTML({quotes: true}))
         .pipe(gulp.dest(path.build.html))
         .pipe(reload({stream: true}));
 });
 
 gulp.task('js:build', ['jekyll:build'], function () {
-    gulp.src(path.src.js)
+    return gulp.src(path.src.js)
         .pipe(rigger())
         .pipe(uglify())
         .pipe(gulp.dest(path.build.js))
@@ -112,7 +122,7 @@ gulp.task('js:build', ['jekyll:build'], function () {
 });
 
 gulp.task('style:build', function () {
-    gulp.src(path.src.style)
+    return gulp.src(path.src.style)
         .pipe(prefixer())
         .pipe(cleanCSS({compatibility: 'ie8'}))
         .pipe(gulp.dest(path.build.css))
@@ -120,7 +130,7 @@ gulp.task('style:build', function () {
 });
 
 gulp.task('image:build', function () {
-    gulp.src(path.src.img)
+    return gulp.src(path.src.img)
         .pipe(imagemin({
             progressive: true,
             svgoPlugins: [{removeViewBox: false}],
@@ -132,20 +142,21 @@ gulp.task('image:build', function () {
 });
 
 gulp.task('fonts:build', function () {
-    gulp.src(path.src.fonts)
+    return gulp.src(path.src.fonts)
         .pipe(gulp.dest(path.build.fonts))
         .pipe(reload({stream: true}));
 });
 
 gulp.task('php:copy', function () {
-    gulp.src(path.src.php)
+    return gulp.src(path.src.php)
         .pipe(gulp.dest(path.build.php))
         .pipe(reload({stream: true}));
 });
 
+//TODO: copy RSS FEED.
 
-gulp.task('sitemap:build', function () {
-    gulp.src(path.build.html + '**/*.html')
+gulp.task('sitemap:build', ['html:build'], function () {
+    return gulp.src(filterHtml(path.build.html))
         .pipe(sitemap({
             siteUrl: site.url
         }))
@@ -153,7 +164,9 @@ gulp.task('sitemap:build', function () {
 });
 
 gulp.task('build', [
+    'clean',
     'html:build',
+    'rss:copy_feed',
     'js:build',
     'style:build',
     'fonts:build',
@@ -161,6 +174,15 @@ gulp.task('build', [
     'php:copy',
     'sitemap:build'
 ]);
+
+gulp.task('site:deploy', ['build'], function () {
+    return gulp.src(filterAny(path.build.html))
+        .pipe(ftp(privateConfig.ftp_settings))
+        // you need to have some kind of stream after gulp-ftp to make sure it's flushed
+        // this can be a gulp plugin, gulp.dest, or any kind of stream
+        // here we use a passthrough stream
+        .pipe(gutil.noop());
+});
 
 gulp.task('watch', function () {
     gulp.watch([path.watch.html], function (event, cb) {

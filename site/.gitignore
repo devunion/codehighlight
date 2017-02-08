@@ -2,3 +2,4 @@ bower_components
 build
 jekyll_build
 node_modules
+gulp-config.json

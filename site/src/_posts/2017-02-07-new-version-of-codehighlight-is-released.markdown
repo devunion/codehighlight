@@ -44,8 +44,8 @@ When you click on the Save button, the prompt dialog will appear and ask you to 
 pattern instead of the exact URL:
 
 <figure>
-  <img src='/img/blog/CodeHighlight_Pattern_Confirmation.png' alt='URL or Pattern Prompt Dialog.'>
-  <figcaption>Save Button Inside a Code Editor</figcaption>
+  <img src='/img/blog/CodeHighlight_Pattern_Confirmation.png' alt='URL or Pattern Prompt Dialog'>
+  <figcaption>URL or Pattern Prompt Dialog</figcaption>
 </figure>
 
 The **pattern specification** feature can be very helpful if you need to work with the same editor on the different pages of a
