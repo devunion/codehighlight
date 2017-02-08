@@ -153,8 +153,6 @@ gulp.task('php:copy', function () {
         .pipe(reload({stream: true}));
 });
 
-//TODO: copy RSS FEED.
-
 gulp.task('sitemap:build', ['html:build'], function () {
     return gulp.src(filterHtml(path.build.html))
         .pipe(sitemap({
