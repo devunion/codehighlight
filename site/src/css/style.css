@@ -5,6 +5,19 @@
 						MY CUSTOM STYLES
 -----------------------------------------------------------------------------------------*/
 
+/***************** The same height columns *****************/
+.header-row.row {
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	flex-wrap: wrap;
+}
+.header-row.row > [class*='col-'] {
+	display: flex;
+	flex-direction: column;
+}
+
 div.single-post div.post-content a, div.post-desc a {
 	color: #00c0ff;
 	text-decoration: underline;
@@ -66,9 +79,13 @@ header#intro {
 	height: 327px;
 }
 
+.col-flex-center {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
 .vs {
-	margin-left: 30px;
-	margin-right: 30px;
+	margin: 30px;
 }
 
 
@@ -728,6 +745,25 @@ label.error.valid,
 	top: 15px;
 	left: 20px;
 }
+
+@media (max-width: 1200px) {
+	.download-btn,
+	.download-btn:hover,
+	.download-btn:active,
+	.download-btn:visited {
+		padding-left: 35px;
+	}
+}
+@media (max-width: 992px) {
+	.download-btn,
+	.download-btn:hover,
+	.download-btn:active,
+	.download-btn:visited {
+		padding-left: 25px;
+	}
+}
+
+
 
 a.read-more {
 	display: inline-block;

@@ -7,7 +7,7 @@
 
     <title>{% if page.title %}{{ page.title }} - {% endif %}{{site.title}}</title>
 
-    <link rel="canonical" href="{{site.url}}/"/>
+    <link rel="canonical" href="{{site.url}}{{page.url}}"/>
     <meta name="description" content="{{page.meta.description}}">
     <meta name="keywords" content="{{page.meta.keywords}}">
 
@@ -123,7 +123,7 @@
                             <strong>Blog</strong>
                         </a>
                         {% else %}
-                        <a href="/blog/">Blog</a>
+                            <a href="/blog/">Blog</a>
                         {% endif %}
                     </li>
                 </ul>
