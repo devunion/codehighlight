@@ -16,13 +16,13 @@
         }, options)).hide());
     }
 
-    function shouldInjectBeautiry(options) {
+    function shouldInjectBeautify(options) {
         return options.add_format_button || options.format_on_loading;
     }
 
     function getScriptsToInject(options) {
         var result = [CDN_JS_ACE, chrome.extension.getURL('js/editors/tinymce/loader.js')];
-        if (shouldInjectBeautiry(options)) {
+        if (shouldInjectBeautify(options)) {
             result.push(chrome.extension.getURL('js/content/lib/beautify-html.js'));
         }
         return result;
@@ -38,13 +38,53 @@
         injectScripts(getScriptsToInject(options));
     }
 
+    function addSummerNoteCustomization(options) {
+        // console.log('addSummerNoteCustomization: ' + shouldInjectBeautify(options));
+
+        // if (shouldInjectBeautify(options)) {
+        //     injectScripts([chrome.extension.getURL('js/content/lib/beautify-html.js')]);
+        // }
+    }
+
     function getOptions(editors) {
         return Object.assign({theme: getAceTheme(editors.theme)}, editors.tinymceOptions);
     }
 
-    chrome.runtime.sendMessage({action: 'get-installed-editors'}, function (editors) {
-        if (editors.tinymce) {
-            addTinyMceCustomization(getOptions(editors));
+    function detectEditors() {
+        injectScripts([
+            chrome.extension.getURL('js/content/const.js'),
+            chrome.extension.getURL('js/content/events.js'),
+            chrome.extension.getURL('js/editors/detector.js')
+        ]);
+    }
+
+    function getEditorsOptions(callback) {
+        chrome.runtime.sendMessage({action: 'get-editors-options'}, callback);
+    }
+
+    function handleInstalledEditors(data) {
+        console.log('@@@@ data: ' + JSON.stringify(data));
+        window._detectedEditors = data;
+
+        if (data.summernote) {
+            getEditorsOptions(function(options){
+                window._detectedEditorsOptions = options;
+
+                // console.log('summernote options: ' + JSON.stringify(options));
+                addSummerNoteCustomization(options.summernoteOptions);
+            });
         }
-    });
+        if (data.tinymce) {
+            getEditorsOptions(function(options){
+                window._detectedEditorsOptions = options;
+
+                // console.log('tinymce options: ' + JSON.stringify(options));
+                addTinyMceCustomization(getOptions(options));
+            });
+        }
+    }
+
+    var api = new ExtAPI();
+    api.getInstalledEditors(handleInstalledEditors);
+    detectEditors();
 })();

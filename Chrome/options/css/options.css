@@ -29,6 +29,32 @@ nav.top-nav a.breadcrumb {
     background-color: #00b0ff;
 }
 
+input[type=email]:focus {
+    border-bottom-color: #00b0ff !important;
+    box-shadow:0 1px 0 0 #00b0ff !important;;
+}
+
+input[type=email].valid {
+    border-bottom: 1px solid #00b0ff !important;
+    box-shadow: 0 1px 0 0 #00b0ff !important;;
+}
+
+input[type=email]:focus:not([readonly]) + label {
+    color: #00b0ff !important;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.underline {
+    text-decoration: underline;
+}
+.underline i {
+    text-decoration: underline;
+}
+
+
 /* Social Share icons */
 .fa-facebook {
     background-color: #3b5998;

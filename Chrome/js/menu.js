@@ -1,5 +1,5 @@
 import * as options from 'options/js/options.js';
-import {hasTinyMCE} from 'js/support/tinymce.js';
+// import {hasTinyMCE, hasSummerNote} from 'js/support/common-editors.js';
 
 var ID_HIGHLIGHT_TOP = "highlightTop";
 var ID_REMOVE_HIGHLIGHTING = 'removeHighlighting';
@@ -50,7 +50,8 @@ export function createLanguagesMenuItems(parentId, contexts, action, theme) {
             contexts: contexts,
             onclick: (function (syntax) {
                 return function (info, tab) {
-                    chrome.tabs.sendMessage(tab.id, {action: action, syntax: syntax, theme: theme, editors: {tinymce: hasTinyMCE(tab.id)}});
+                    // editors: {tinymce: hasTinyMCE(tab.id), summernote: hasSummerNote(tab.id)}
+                    chrome.tabs.sendMessage(tab.id, {action: action, syntax: syntax, theme: theme});
                 }
             })(lang[1])
         });
@@ -74,7 +75,7 @@ export function addHighlightingMenu() {
             title: "Report bad support",
             contexts: ["editable"],
             onclick: function (info, tab) {
-                chrome.tabs.sendMessage(tab.id, {action: 'report-bad-support'});
+                chrome.tabs.sendMessage(tab.id, {action: 'report-bad-support', email: options.getUserEmail()});
             }
         });
     });

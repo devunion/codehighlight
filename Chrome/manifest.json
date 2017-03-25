@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "CodeHighlight",
-  "version": "1.3.0",
+  "version": "1.3.5",
   "icons": {
     "16": "img/16.png",
     "19": "img/19.png",
@@ -25,6 +25,8 @@
       "js": [
         "js/lib/jquery-2.1.4.min.js",
         "js/content/utils.js",
+        "js/content/const.js",
+        "js/content/events.js",
         "js/content/bad-support.js",
         "js/content/ace-loader.js",
         "js/content/highlightjs-loader.js",
@@ -38,13 +40,14 @@
     "tabs",
     "activeTab",
     "contextMenus",
-    "webRequest",
     "*://*/*"
   ],
   "web_accessible_resources": [
     "img/*",
     "css/patch/*",
     "js/editors/*",
-    "js/content/lib/*"
+    "js/content/lib/*",
+    "js/content/const.js",
+    "js/content/events.js"
   ]
 }

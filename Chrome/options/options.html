@@ -3,7 +3,6 @@
 <head>
     <!--Import Google Icon Font-->
     <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <!--Import materialize.css-->
     <link type="text/css" rel="stylesheet" href="css/materialize.min.css" media="screen,projection"/>
     <link type="text/css" rel="stylesheet" href="css/options.css" media="screen,projection"/>
 
@@ -41,7 +40,11 @@
                         <div class="collapsible-body">
                             <ul>
                                 <li class="tab">
-                                    <a href="#integration-tinymce" class=" light-blue-text text-accent-2">TinyMCE</a>
+                                    <a href="#integration-tinymce" class="light-blue-text text-accent-2">TinyMCE</a>
+                                </li>
+                                <li class="tab">
+                                    <a href="#integration-summernote"
+                                       class="light-blue-text text-accent-2">Summernote</a>
                                 </li>
                             </ul>
                         </div>
@@ -106,6 +109,13 @@
                 <a href="#" class="breadcrumb">TinyMCE</a>
             </div>
         </div>
+        <div class="row breadcrumbs" nav-for="#integration-summernote">
+            <div class="container">
+                <a href="#" class="breadcrumb">Settings</a>
+                <a href="#" class="breadcrumb">Integration</a>
+                <a href="#" class="breadcrumb">Summernote</a>
+            </div>
+        </div>
 
         <div class="row breadcrumbs" nav-for="#highligher-theme">
             <div class="container">
@@ -121,14 +131,30 @@
         <div id="general-settings" class="box">
             <div class="container">
                 <div class="section">
-                    <h4 class="light-blue-text text-accent-3">User Information</h4>
+                    <div class="row">
+                        <div class="col s12">
+                            <h4 class="light-blue-text text-accent-3">User Information</h4>
 
-                    <p class="flow-text">First of all, we want to thank you for installing and using the extension.
-                        <strong>It is still in Beta phase</strong>, but we hope that your ideas and feedback will help
-                        us to improve it and release excellent full-featured version soon. So, feel free to share with
-                        us
-                        your ideas and thoughts.
-                    </p>
+                            <p class="flow-text">First of all, we want to thank you for installing and using the
+                                extension. <strong>It is still in Beta phase</strong>, but we hope that your ideas and
+                                feedback will help us to improve it and release excellent full-featured version soon.
+                                So, feel free to share with us your ideas and thoughts.
+                            </p>
+                        </div>
+                        <div class="col s12">
+                            <h4 class="light-blue-text text-accent-3">Feedback Details</h4>
+
+                            <p class="flow-text">You can leave us your email. So, we will be able to update you
+                                regarding your enquiries.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s5">
+                            <input id="user-email" type="email" class="validate">
+                            <label for="user-email">Email</label>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -187,50 +213,86 @@
                 </div>
             </div>
         </div>
-        <div id="editor-theme" class="box">
+        <div id="integration-summernote" class="box">
             <div class="container">
                 <div class="section">
-                    <h4 class="light-blue-text text-accent-3">Choose Your Editor Theme</h4>
+                    <h4 class="light-blue-text text-accent-3">Integration with Summernote</h4>
 
-                    <p class="flow-text">Here you can change theme for the code editor. At the moment you can choose
-                        between <strong>Light</strong> and <strong>Dark</strong> theme. We're going to add much more
-                        functionality here soon.</p>
-
+                    <p class="flow-text">Summernote have an ability to enable CoreMirror support out-of-the-box.
+                        Unfortunately, not all the projects which use Summernote adding it's support by default. So,
+                        that is why we've been requested to add Summernote support in the extension.</p>
                     <div class="row">
-                        <div class="input-field col s4">
-                            <select id="editor_theme">
-                                <option value="light">Light</option>
-                                <option value="dark">Dark</option>
-                            </select>
-                            <label for="editor_theme">Choose editor theme</label>
+                        <div class="col m12">
+                            <h4 class="light-blue-text text-accent-3">Editor Settings</h4>
+                            <p class="flow-text">Right now automatic source code formatting <span class="underline">works for HTML only</span>.
+                                Feel free to <a href="http://codehighlight.idea.informer.com/proj/?mod=one"
+                                                class="underline" target="_blank">Contact Us <i
+                                        class="material-icons">open_in_new</i></a> if you need to have this feature for
+                                some other languages.</p>
+                        </div>
+                        <div class="col m6">
+                            <div class="card-panel">
+                                <h5>Format code on editor loading</h5>
+
+                                <div class="switch">
+                                    <label>
+                                        No
+                                        <input id="summernote_format_on_loading" type="checkbox">
+                                        <span class="lever light-blue accent-1"></span>
+                                        Yes
+                                    </label>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+    <div id="editor-theme" class="box">
+        <div class="container">
+            <div class="section">
+                <h4 class="light-blue-text text-accent-3">Choose Your Editor Theme</h4>
 
-        <div id="highligher-theme" class="box">
-            <div class="container">
-                <div class="section">
-                    <h4 class="light-blue-text text-accent-3">Choose Your Highligher Theme</h4>
+                <p class="flow-text">Here you can change theme for the code editor. At the moment you can choose
+                    between <strong>Light</strong> and <strong>Dark</strong> theme. We're going to add much more
+                    functionality here soon.</p>
 
-                    <p class="flow-text">Highligher feature allows you to highlight content of a text files. Here you
-                        can change theme for the highlighter feature. At the moment you can choose between
-                        <strong>Light</strong> and <strong>Dark</strong> theme. We're going to add much more
-                        functionality here soon.</p>
-
-                    <div class="row">
-                        <div class="input-field col s4">
-                            <select id="highlighter_theme" class="blue-grey-text text-darken-4">
-                                <option value="light">Light</option>
-                                <option value="dark">Dark</option>
-                            </select>
-                            <label for="highlighter_theme">Choose highlighter theme</label>
-                        </div>
+                <div class="row">
+                    <div class="input-field col s4">
+                        <select id="editor_theme">
+                            <option value="light">Light</option>
+                            <option value="dark">Dark</option>
+                        </select>
+                        <label for="editor_theme">Choose editor theme</label>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+
+    <div id="highligher-theme" class="box">
+        <div class="container">
+            <div class="section">
+                <h4 class="light-blue-text text-accent-3">Choose Your Highligher Theme</h4>
+
+                <p class="flow-text">Highligher feature allows you to highlight content of a text files. Here you
+                    can change theme for the highlighter feature. At the moment you can choose between
+                    <strong>Light</strong> and <strong>Dark</strong> theme. We're going to add much more
+                    functionality here soon.</p>
+
+                <div class="row">
+                    <div class="input-field col s4">
+                        <select id="highlighter_theme" class="blue-grey-text text-darken-4">
+                            <option value="light">Light</option>
+                            <option value="dark">Dark</option>
+                        </select>
+                        <label for="highlighter_theme">Choose highlighter theme</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     </div>
     <hr>
     <div class="row">

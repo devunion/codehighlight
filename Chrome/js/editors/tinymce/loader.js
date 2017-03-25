@@ -114,7 +114,7 @@
                 return;
             }
 
-            tinymce.DOM.bind(button.$el[0], 'click', function (e) {
+            tinymce.DOM.bind(button.el[0], 'click', function (e) {
                 e.stopPropagation();
                 clickHandler();
             })

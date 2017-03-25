@@ -1,8 +1,10 @@
 'use strict';
 
+const SYNTAX_HTML = "html";
 var CDN_JS_ACE_ROOT = 'https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/';
 var CDN_JS_ACE = CDN_JS_ACE_ROOT + 'ace.js';
 
+//TODO: check on WP workfusion plugin custom code (extdev/customers)
 class SavedEditorsState {
     constructor() {
         this.savedEditors = ls_get('ch_saved_editors', {});
@@ -164,6 +166,44 @@ class CodeEditor {
         return this.containerType == 'tinymce' || this.containerType == 'tinymce-code';
     }
 
+    isSummerNoteEditor() {
+        return this.containerType == 'summernote';
+    }
+
+    _ensureFormatterLoaded(callback) {
+        if (!callback) {
+            return;
+        }
+
+        if (window.html_beautify) {
+            callback();
+        } else {
+            chrome.runtime.sendMessage({action: 'load-formatter', syntax: 'html'}, callback);
+        }
+    }
+
+    _getEditorCode(syntax, callback) {
+        if (this.isSummerNoteEditor()) {
+            var code = EditorTypesSupport.isSummerNoteCodable() ? this.$realEditor.val() : this.$realEditor.html();
+
+            if (syntax == SYNTAX_HTML && window._detectedEditorsOptions.summernoteOptions.format_on_loading) {
+                this._ensureFormatterLoaded(function () {
+                    code = window.html_beautify(code, {
+                        "indent_level": 0,
+                        "indent_with_tabs": true,
+                        "preserve_newlines": false,
+                    });
+
+                    callback(code);
+                });
+            } else {
+                callback(code);
+            }
+        } else {
+            callback(this.$realEditor.val());
+        }
+    }
+
     addHighlighting(syntax, theme) {
         // console.log('this.containerType: ' + this.containerType);
 
@@ -176,12 +216,17 @@ class CodeEditor {
 
         this.copyCssToEditor();
 
+        //TODO: remove placeholder for summernote.
         //TODO: just add class???
-        this.$editor.text(this.$realEditor.val());
-        this.$realEditorContainer.hide();
+        this._getEditorCode(syntax, function (code) {
+            this.setValue(code);
 
-        this.addCodeEditor(syntax, theme);
-        this.addSaveButton(syntax, theme);
+            // jQuery show/hide don't always works as expected.
+            this.$realEditorContainer.addClass('hidden');
+
+            this.addCodeEditor(syntax, theme);
+            this.addSaveButton(syntax, theme);
+        }.bind(this));
     }
 
     addCodeEditor(syntax, theme) {
@@ -197,6 +242,11 @@ class CodeEditor {
         this.addStateSync();
     }
 
+    setValue(value) {
+        this.$editor.text(value);
+        // this.aceEditor.setValue(value);
+    }
+
     addSaveButton(syntax, theme) {
         this.saveButton = new CodeEditorButton(this.$editor, this.realEditorXPath, syntax, theme);
         this.saveButton.appendTo('body');
@@ -204,14 +254,23 @@ class CodeEditor {
 
     addStateSync() {
         this.aceEditor.getSession().on('change', function (e) {
-            this.$realEditor.val(this.aceEditor.getValue());
+            // console.log('change: ' + e);
+            if (this.isSummerNoteEditor()) {
+                if (this._containerInfo.extra.codable) {
+                    this.$realEditor.val(this.aceEditor.getValue());
+                } else {
+                    this.$realEditor.html(this.aceEditor.getValue());
+                }
+            } else {
+                this.$realEditor.val(this.aceEditor.getValue());
+            }
         }.bind(this));
     }
 
     removeHighlighting() {
         //this.aceEditor.destroy();
         this.$editor.remove();
-        this.$realEditorContainer.show();
+        this.$realEditorContainer.removeClass('hidden');
         this.saveButton.remove();
 
         this.$realEditor.focus();
@@ -225,6 +284,18 @@ class EditorTypesSupport {
 
     static isTinyMcePopupEditor() {
         return $(document.activeElement).hasClass('mce-textbox');
+    }
+
+    static isSummerNoteEditable() {
+        return $(document.activeElement).hasClass('note-editable');
+    }
+
+    static isSummerNoteCodable() {
+        return $(document.activeElement).hasClass('note-codable');
+    }
+
+    static getSummerNoteEditor() {
+        return $(document.activeElement).parents('.note-editor');
     }
 
     static getTinyMcePopupContainer() {
@@ -248,6 +319,18 @@ class EditorTypesSupport {
             return {
                 type: 'tinymce-code',
                 container: EditorTypesSupport.getTinyMcePopupContainer()
+            };
+        }
+
+        // SummerNote Source Code Editor
+        if (EditorTypesSupport.isSummerNoteEditable() || EditorTypesSupport.isSummerNoteCodable()) {
+            return {
+                type: 'summernote',
+                extra: {
+                    editable: EditorTypesSupport.isSummerNoteEditable(),
+                    codable: EditorTypesSupport.isSummerNoteCodable()
+                },
+                container: EditorTypesSupport.getSummerNoteEditor()
             };
         }
 
@@ -281,9 +364,18 @@ class CodeEditorManager {
     }
 
     handleMessage(msg) {
+        // console.log('message: ' + JSON.stringify(msg));
+        // console.log('window._detectedEditors: ' + JSON.stringify(window._detectedEditors));
+
         if (msg.action == 'add-ace-highlighting') {
-            let editor = this.getEditorForNode(document.activeElement);
-            editor.addHighlighting(msg.syntax, msg.theme);
+            // console.log('document.activeElement:');
+            // console.log(document.activeElement);
+
+            var editor = this.getEditorForNode(document.activeElement);
+            editor.addHighlighting(msg.syntax, msg.theme, msg.editors);
+            // console.log('editor: ');
+            // console.log(editor);
+
         } else if (msg.action == 'remove-ace-highlighting') {
             var originalEditorXPath = $(document.activeElement).parents('.ace_editor').attr('original-editor');
             var originalEditor = getElementByXpath(originalEditorXPath);

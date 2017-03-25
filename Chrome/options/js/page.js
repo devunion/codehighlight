@@ -28,6 +28,10 @@ function initOptions() {
         options.setHighlighterTheme($(e.target).val());
     }).val(options.getHighlighterTheme()).material_select();
 
+    $('#user-email').on('change', (e)=>{
+        options.setUserEmail($(e.target).val());
+    }).val(options.getUserEmail());
+
     var tinySourceCodeHighlighted = $('#tinymce_source_code_highlighted').on('change', (e)=>{
         options.setTinySourceCodeHighlighted($(e.target).prop('checked'));
     });
@@ -51,9 +55,20 @@ function initOptions() {
     if (options.isTinyFormatOnLoading()) {
         tinyFormatOnLoading.prop('checked', true);
     }
+
+    ///////////////////////////////
+
+    var summernoteFormatOnLoading = $('#summernote_format_on_loading').on('change', (e)=>{
+        options.setSummernoteFormatOnLoading($(e.target).prop('checked'));
+    });
+
+    if (options.isSummernoteFormatOnLoading()) {
+        summernoteFormatOnLoading.prop('checked', true);
+    }
 }
 
 $(document).ready(function () {
     initUI();
     initOptions();
+    Materialize.updateTextFields();
 });
