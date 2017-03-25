@@ -14,7 +14,7 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 title: CodeHighlight
-url: "http://codehighlight.com"
+url: "https://codehighlight.com"
 support_page: http://codehighlight.idea.informer.com/proj/?mod=one
 
 disqus:

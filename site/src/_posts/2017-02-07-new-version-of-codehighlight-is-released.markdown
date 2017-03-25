@@ -2,7 +2,7 @@
 layout: post
 comments: true
 title:  "New version of CodeHighlight is released"
-date:   2017-02-07 16:20:42 +0300
+
 image:
     url: /img/blog/CodeHighlight_1_3_is_released.jpg
     alt: "Hightlight.js Integtation Sample"

@@ -24,7 +24,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (!empty($_POST['xpath']) && !empty($_POST['url'])) {
 
                 $msg = "URL: {$_POST['url']}" .
-                    "\nXPath: {$_POST['xpath']}";
+                    "\nXPath: {$_POST['xpath']}" .
+                    "\nEmail: {$_POST['email']}";
 
                 $emailMsg = "Sent from CodeHighlight.com:\n\n" . $msg . '\n';
 

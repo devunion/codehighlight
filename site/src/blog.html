@@ -14,7 +14,7 @@ meta:
         <h4 class="sub-title">Our news and productivity tips</h4>
         <ul class="time-line">
             {% for post in site.posts %}
-            <li>
+            <li class="{% cycle '', 'invert' %}">
                 <div class="post" itemscope itemtype="http://schema.org/BlogPosting">
                     <div class="post-media">
                         <a href="{{ post.url | relative_url }}">

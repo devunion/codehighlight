@@ -39,7 +39,7 @@ $(document).ready(function () {
 //------------------------------------------------------------------------
 //						ANCHOR SMOOTHSCROLL SETTINGS
 //------------------------------------------------------------------------
-    $('a.goto, .navbar .nav a').smoothScroll({speed: 800});
+    $('a.goto, .navbar .nav a').smoothScroll({speed: 800, preventDefault: false});
 
 
 //------------------------------------------------------------------------

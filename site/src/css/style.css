@@ -763,7 +763,18 @@ label.error.valid,
 	}
 }
 
-
+.post-content a[target='_blank'] {
+	position: relative;
+	margin-right: 17px;
+}
+.post-content a[target='_blank']:after {
+	position: absolute;
+	font-size: 80%;
+	font-family: 'iconfont';
+	content: "\e0b3";
+	margin-left: 3px;
+	top: -3px;
+}
 
 a.read-more {
 	display: inline-block;
