@@ -5,6 +5,14 @@
 						MY CUSTOM STYLES
 -----------------------------------------------------------------------------------------*/
 
+#feedback-button {
+	position: fixed;
+	left: 0;
+	top: 45%;
+	z-index: 5;
+
+}
+
 /***************** The same height columns *****************/
 .header-row.row {
 	display: -webkit-box;
