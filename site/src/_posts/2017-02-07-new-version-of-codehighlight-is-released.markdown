@@ -36,7 +36,7 @@ to add source code highlighting manually. Now you can just press Save button at 
 CodeHighlight extension will save your settings and they should be restored after the page reloading:
 
 <figure>
-  <img src='/img/blog/CodeHighlight_Save_Button.png' alt='Save Button Inside Code Editor'>
+  <img src='{{site.url}}/img/blog/CodeHighlight_Save_Button.png' alt='Save Button Inside Code Editor'>
   <figcaption>Save Button Inside a Code Editor</figcaption>
 </figure>
 
@@ -44,7 +44,7 @@ When you click on the Save button, the prompt dialog will appear and ask you to 
 pattern instead of the exact URL:
 
 <figure>
-  <img src='/img/blog/CodeHighlight_Pattern_Confirmation.png' alt='URL or Pattern Prompt Dialog'>
+  <img src='{{site.url}}/img/blog/CodeHighlight_Pattern_Confirmation.png' alt='URL or Pattern Prompt Dialog'>
   <figcaption>URL or Pattern Prompt Dialog</figcaption>
 </figure>
 

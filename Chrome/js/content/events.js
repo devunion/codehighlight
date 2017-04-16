@@ -46,6 +46,10 @@ ExtAPI.prototype.sendInstalledEditorsEvent = function (data) {
     this._sendExtEvent(RESPONSE_GET_INSTALLED_EDITORS, data);
 };
 
+ExtAPI.prototype.sendInstalledEditorsEvent = function (data) {
+    this._sendExtEvent(RESPONSE_GET_INSTALLED_EDITORS, data);
+};
+
 ExtAPI.prototype.getInstalledEditors = function (callback) {
     this._installedEditorsCallbacks.push(callback);
 

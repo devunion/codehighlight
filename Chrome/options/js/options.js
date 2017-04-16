@@ -1,5 +1,167 @@
 import * as ls from 'js/ls.js';
 
+const SUPPORTED_LANGUAGES = [
+    {
+        name: 'ActionScript',
+        slug: 'actionscript',
+        enabled: false
+    },
+    {
+        name: 'Apache Config',
+        slug: 'apache_conf',
+        enabled: false
+    },
+    {
+        name: 'Clojure',
+        slug: 'clojure',
+        enabled: false
+    },
+    {
+        name: 'C/C++',
+        slug: 'cpp',
+        enabled: true
+    },
+    {
+        name: 'CoffeeScript',
+        slug: 'coffee',
+        enabled: false
+    },
+    {
+        name: 'CSS',
+        slug: 'css',
+        enabled: true
+    },
+    {
+        name: 'Dart',
+        slug: 'dart',
+        enabled: false
+    },
+    {
+        name: 'Go',
+        slug: 'golang',
+        enabled: false
+    },
+    {
+        name: 'Groovy',
+        slug: 'groovy',
+        enabled: false
+    },
+    {
+        name: 'Haskell',
+        slug: 'haskell',
+        enabled: false
+    },
+    {
+        name: 'HTML',
+        slug: 'html',
+        enabled: true
+    },
+    {
+        name: 'Jade',
+        slug: 'jade',
+        enabled: false
+    },
+    {
+        name: 'Java',
+        slug: 'java',
+        enabled: true
+    },
+    {
+        name: 'JavaScript',
+        slug: 'javascript',
+        enabled: true
+    },
+    {
+        name: 'JSON',
+        slug: 'json',
+        enabled: false
+    },
+    {
+        name: 'LESS',
+        slug: 'less',
+        enabled: false
+    },
+    {
+        name: 'Markdown',
+        slug: 'markdown',
+        enabled: false
+    },
+    {
+        name: 'MySQL',
+        slug: 'mysql',
+        enabled: false
+    },
+    {
+        name: 'Perl',
+        slug: 'perl',
+        enabled: false
+    },
+    {
+        name: 'PHP',
+        slug: 'php',
+        enabled: true
+    },
+    {
+        name: 'Python',
+        slug: 'python',
+        enabled: true
+    },
+    {
+        name: 'Ruby',
+        slug: 'ruby',
+        enabled: true
+    },
+    {
+        name: 'Rust',
+        slug: 'rust',
+        enabled: false
+    },
+    {
+        name: 'SASS',
+        slug: 'sass',
+        enabled: false
+    },
+    {
+        name: 'SCSS',
+        slug: 'scss',
+        enabled: false
+    },
+    {
+        name: 'SQL',
+        slug: 'sql',
+        enabled: false
+    },
+    {
+        name: 'SVG',
+        slug: 'svg',
+        enabled: false
+    },
+    {
+        name: 'Typescript',
+        slug: 'typescript',
+        enabled: false
+    },
+    {
+        name: 'XML',
+        slug: 'xml',
+        enabled: false
+    },
+    {
+        name: 'YAML',
+        slug: 'yaml',
+        enabled: false
+    }
+];
+
+export function getActiveLanguages() {
+    return ls.get('active_languages', SUPPORTED_LANGUAGES);
+}
+export function setActiveLanguage(slug, isActive) {
+    let active = getActiveLanguages();
+    active.filter(function(l){return l.slug==slug;})[0].enabled = isActive;
+    return ls.set('active_languages', active);
+}
+
 export function getEditorTheme() {
     return ls.get('editor_theme', 'dark');
 }

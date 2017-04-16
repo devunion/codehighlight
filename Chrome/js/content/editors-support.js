@@ -1,11 +1,4 @@
 (function () {
-    function injectScripts(scripts) {
-        var head = $('head');
-        scripts.forEach(function (url) {
-            head.append($("<script>", {'src': url}));
-        });
-    }
-
     function isHighlightingEnabled(options) {
         return options['source_code_highlighted'];
     }
@@ -63,7 +56,6 @@
     }
 
     function handleInstalledEditors(data) {
-        console.log('@@@@ data: ' + JSON.stringify(data));
         window._detectedEditors = data;
 
         if (data.summernote) {

@@ -50,5 +50,5 @@ BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
 <IfModule mod_rewrite.c>
 RewriteEngine on
 RewriteCond %{HTTPS} !=on
-RewriteRule (.*) https://codehighlight.com/$1 [R]
+RewriteRule ^(.*) https://%{SERVER_NAME}/$1 [R,L]
 </ifModule>

@@ -7,15 +7,22 @@ var gulp = require('gulp'),
     cleanCSS = require('gulp-clean-css'),
     minifyHTML = require('gulp-minify-html'),
     imagemin = require('gulp-imagemin'),
-    pngquant = require('imagemin-pngquant'),
+    imageminPng = require('imagemin-pngquant'),
+    imageminJpg = require('imagemin-jpeg-recompress'),
     del = require('del'),
     browserSync = require("browser-sync"),
     gutil = require('gulp-util'),
     cp = require('child_process'),
     sitemap = require('gulp-sitemap'),
     reload = browserSync.reload,
+    concat = require('gulp-concat'),
+    postcss = require('gulp-postcss'),
+    autoprefixer = require('autoprefixer'),
+    cssnano = require('cssnano'),
     ftp = require('gulp-ftp'),
     privateConfig = require('./gulp-config.json');
+
+var ENV = 'prod';
 
 var path = {
     build: {
@@ -33,6 +40,7 @@ var path = {
         rss: 'jekyll_build/*.xml'
     },
     src: {
+        root: 'src/',
         html: 'src/*.html',
         js: 'src/js/main.js',
         style: 'src/css/*.css',
@@ -55,7 +63,7 @@ var path = {
 };
 
 var site = {
-    url: 'http://codehighlight.com'
+    url: 'https://codehighlight.com'
 };
 
 var config = {
@@ -93,13 +101,18 @@ gulp.task('clean', function () {
  * Build the Jekyll Site
  */
 gulp.task('jekyll:build', function (done) {
-    return cp.spawn('cmd', ('/c jekyll build -s src -d ' + path.jekyll.build).split(' '), {stdio: 'inherit'}).on('close', done);
+    return cp.spawn('cmd', ('/c jekyll build --config src/_config.yml,src/_config_' + ENV +'.yml -s src -d ' + path.jekyll.build).split(' '), {stdio: 'inherit'}).on('close', done);
 });
 
 gulp.task('html:copy_blog', ['jekyll:build'], function () {
     return gulp.src(filterHtml(path.jekyll.blog))
         .pipe(minifyHTML({quotes: true}))
         .pipe(gulp.dest(path.build.blog));
+});
+
+gulp.task('htaccess:copy', function () {
+    return gulp.src(path.src.root + '.htaccess')
+        .pipe(gulp.dest(path.build.html));
 });
 gulp.task('rss:copy_feed', ['jekyll:build'], function () {
     return gulp.src(path.jekyll.rss)
@@ -123,18 +136,21 @@ gulp.task('js:build', ['jekyll:build'], function () {
 
 gulp.task('style:build', function () {
     return gulp.src(path.src.style)
-        .pipe(prefixer())
-        .pipe(cleanCSS({compatibility: 'ie8'}))
+        .pipe(postcss([autoprefixer({
+            remove: false,
+            browsers: ['> 2%']
+        }), cssnano()]))
+        .pipe(concat('styles.min.css'))
         .pipe(gulp.dest(path.build.css))
         .pipe(reload({stream: true}));
 });
 
+// verbose: true,
 gulp.task('image:build', function () {
     return gulp.src(path.src.img)
-        .pipe(imagemin({
+        .pipe(imagemin([imageminPng(), imageminJpg()], {
             progressive: true,
             svgoPlugins: [{removeViewBox: false}],
-            use: [pngquant()],
             interlaced: true
         }))
         .pipe(gulp.dest(path.build.img))
@@ -163,6 +179,7 @@ gulp.task('sitemap:build', ['html:build'], function () {
 
 gulp.task('build', [
     'clean',
+    'htaccess:copy',
     'html:build',
     'rss:copy_feed',
     'js:build',
@@ -207,4 +224,14 @@ gulp.task('watch', function () {
 });
 
 
-gulp.task('default', ['build', 'webserver', 'watch']);
+gulp.task('build_all', ['build', 'webserver', 'watch']);
+
+gulp.task('default', [], function(){
+    ENV = 'dev';
+    gulp.start('build_all');
+});
+
+gulp.task('release', [], function(event, ch){
+    ENV = 'prod';
+    gulp.start('build_all');
+});

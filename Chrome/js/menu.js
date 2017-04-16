@@ -35,22 +35,15 @@ export function addHighlightJsMenu() {
 }
 
 export function createLanguagesMenuItems(parentId, contexts, action, theme) {
-    [
-        ["CSS", 'css'],
-        ["JavaScript", 'javascript'],
-        ["HTML", 'html'],
-        ["Python", 'python'],
-        ["C++", 'cpp'],
-        ["Java", 'java'],
-        ["Ruby", 'ruby']
-    ].forEach(function (lang) {
+    let languages = options.getActiveLanguages().filter(l => l.enabled).map(l => [l.name, l.slug]);
+
+    languages.forEach(function (lang) {
         chrome.contextMenus.create({
             parentId: parentId,
             title: lang[0],
             contexts: contexts,
             onclick: (function (syntax) {
                 return function (info, tab) {
-                    // editors: {tinymce: hasTinyMCE(tab.id), summernote: hasSummerNote(tab.id)}
                     chrome.tabs.sendMessage(tab.id, {action: action, syntax: syntax, theme: theme});
                 }
             })(lang[1])

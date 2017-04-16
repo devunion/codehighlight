@@ -18,6 +18,13 @@ function ls_set(name, val) {
     localStorage[name] = JSON.stringify(val);
 }
 
+function injectScripts(scripts) {
+    var head = $('head');
+    scripts.forEach(function (url) {
+        head.append($("<script>", {'src': url}));
+    });
+}
+
 function getAceTheme(theme) {
     if (theme == 'dark') {
         theme = 'monokai';

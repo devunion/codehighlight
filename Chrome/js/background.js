@@ -5,6 +5,8 @@ var URL_UNINSTALL = 'http://codehighlight.idea.informer.com/proj/?mod=one';
 import * as menu from 'js/menu.js';
 import * as options from 'options/js/options.js';
 
+window.menu = menu;
+
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     if (message.action == 'inject_script') {
         $.ajax({

@@ -4,13 +4,28 @@
 /*----------------------------------------------------------------------------------------
 						MY CUSTOM STYLES
 -----------------------------------------------------------------------------------------*/
-
 #feedback-button {
 	position: fixed;
 	left: 0;
 	top: 45%;
 	z-index: 5;
+}
 
+.flow-text {
+	font-size: 20px;
+	color: #333;
+	line-height: 1.6;
+	margin-bottom: 50px;
+	margin-left: 75px;
+	margin-right: 75px;
+}
+
+.shortcut {
+	color: #900;
+	font-weight: bold;
+	border: 1px solid #900;
+	border-radius: 3px;
+	padding: 2px 4px;
 }
 
 /***************** The same height columns *****************/
@@ -180,8 +195,7 @@ h3 {
 
 h4 {
 	font-size: 20px;
-	font-weight: 300;
-	margin: 10px 0 20px 0;
+	margin: 20px 0 20px 0;
 }
 
 h5 {
@@ -771,17 +785,18 @@ label.error.valid,
 	}
 }
 
-.post-content a[target='_blank'] {
+.post-content *:not(sup) > a[target='_blank'] {
 	position: relative;
 	margin-right: 17px;
 }
-.post-content a[target='_blank']:after {
+.post-content *:not(sup) > a[target='_blank']:after {
 	position: absolute;
 	font-size: 80%;
 	font-family: 'iconfont';
 	content: "\e0b3";
 	margin-left: 3px;
 	top: -3px;
+	font-weight: 100;
 }
 
 a.read-more {

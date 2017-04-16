@@ -20,7 +20,7 @@
     <meta property="og:title" content="{{page.title}}"/>
     <meta property="og:site_name" content="{{site.title}}"/>
     <meta property="og:description" content="{{page.meta.description}}"/>
-    <meta property="og:image" content="http://codehighlight.com/img/og_image.png"/>
+    <meta property="og:image" content="{{site.url}}/img/og_image.png"/>
     <meta property="og:type" content="website"/>
     <meta property="og:url" content="{{site.url}}{{page.url}}"/>
 
@@ -37,10 +37,10 @@
     <!--<link href="/css/iconfont-style.css" rel="stylesheet">-->
 
     <!-- Favicons -->
-    <link rel="icon" href="/img/favicons/favicon.png">
-    <link rel="apple-touch-icon" href="/img/favicons/apple-touch-icon.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="/img/favicons/apple-touch-icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="/img/favicons/apple-touch-icon-114x114.png">
+    <link rel="icon" href="{{site.url}}/img/favicons/favicon.png">
+    <link rel="apple-touch-icon" href="{{site.url}}/img/favicons/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="{{site.url}}/img/favicons/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="{{site.url}}/img/favicons/apple-touch-icon-114x114.png">
 
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements. All other JS at the end of file. -->
@@ -73,6 +73,7 @@
     </script>
 </head>
 <body data-spy="scroll" data-target=".navMenuCollapse">
+{% if jekyll.environment == "production" %}
 <script>
     (function (i, s, o, g, r, a, m) {
         i['GoogleAnalyticsObject'] = r;
@@ -89,12 +90,13 @@
     ga('create', 'UA-76475421-1', 'auto');
     ga('send', 'pageview');
 </script>
+{% endif %}
 
 <div id="wrap">
     <nav class="navbar bg-color1 dark-bg">
         <div class="container-fluid">
             <a class="navbar-brand goto" href="/">
-                <img src="/img/logo.png" height="35" alt="CodeHighlight.com Logo" style="vertical-align: text-bottom;"
+                <img src="{{site.url}}/img/logo.png" height="35" alt="CodeHighlight.com Logo" style="vertical-align: text-bottom;"
                      data-pin-nopin="true">
                 <span style="font-size: 150%">CodeHighlight <sup>beta</sup></span>
             </a>
@@ -110,11 +112,11 @@
                     <li><a href="/#download">Download</a></li>
                     <li>
                         {% if page.url == '/blog/' %}
-                        <a href="#">
+                        <a href="{{site.url}}/blog/">
                             <strong>Blog</strong>
                         </a>
                         {% else %}
-                            <a href="/blog/">Blog</a>
+                            <a href="{{site.url}}/blog/">Blog</a>
                         {% endif %}
                     </li>
                 </ul>

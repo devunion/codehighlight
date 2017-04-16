@@ -1,5 +1,41 @@
 import * as options from 'js/options.js';
 
+function initActiveLanguages() {
+    function createLanguageCheckbox(slug, checked) {
+        return `<div class="switch">
+                    <label>
+                        No
+                        <input data-language="${slug}" type="checkbox" ${checked ? 'checked' : ''}>
+                        <span class="lever light-blue accent-1"></span>
+                        Yes
+                    </label>
+                </div>`;
+    }
+
+    let table = $('#languages-table').find('tbody');
+    let active = options.getActiveLanguages();
+
+    let row;
+    active.forEach(function (l, index) {
+        if (index % 2 == 0) {
+            row = $('<tr>');
+        }
+
+        table.append(
+            row
+                .append($('<td>').text(l.name))
+                .append($('<td class="center">').html(createLanguageCheckbox(l.slug, l.enabled)))
+        )
+    });
+
+    table.find('input').on('change', (e)=> {
+        let ch = $(e.target);
+        options.setActiveLanguage(ch.attr('data-language'), ch.prop('checked'));
+
+        chrome.extension.getBackgroundPage().menu.addHighlightingMenu();
+    });
+}
+
 function initUI() {
     $('select').material_select();
 
@@ -17,22 +53,29 @@ function initUI() {
             return $(this).attr("nav-for") == containerSelector;
         }).show();
     });
+
+    $("li.tab").click(function () {
+        $(this).siblings().removeClass('active');
+        $(this).addClass('active')
+    });
+
+    initActiveLanguages();
 }
 
 function initOptions() {
-    $('#editor_theme').on('change', (e)=>{
+    $('#editor_theme').on('change', (e)=> {
         options.setEditorTheme($(e.target).val());
     }).val(options.getEditorTheme()).material_select();
 
-    $('#highlighter_theme').on('change', (e)=>{
+    $('#highlighter_theme').on('change', (e)=> {
         options.setHighlighterTheme($(e.target).val());
     }).val(options.getHighlighterTheme()).material_select();
 
-    $('#user-email').on('change', (e)=>{
+    $('#user-email').on('change', (e)=> {
         options.setUserEmail($(e.target).val());
     }).val(options.getUserEmail());
 
-    var tinySourceCodeHighlighted = $('#tinymce_source_code_highlighted').on('change', (e)=>{
+    var tinySourceCodeHighlighted = $('#tinymce_source_code_highlighted').on('change', (e)=> {
         options.setTinySourceCodeHighlighted($(e.target).prop('checked'));
     });
 
@@ -40,7 +83,7 @@ function initOptions() {
         tinySourceCodeHighlighted.prop('checked', true);
     }
 
-    var tinyAddFormatButton = $('#tinymce_add_format_button').on('change', (e)=>{
+    var tinyAddFormatButton = $('#tinymce_add_format_button').on('change', (e)=> {
         options.setTinyAddFormatCodeButton($(e.target).prop('checked'));
     });
 
@@ -48,7 +91,7 @@ function initOptions() {
         tinyAddFormatButton.prop('checked', true);
     }
 
-    var tinyFormatOnLoading = $('#tinymce_format_on_loading').on('change', (e)=>{
+    var tinyFormatOnLoading = $('#tinymce_format_on_loading').on('change', (e)=> {
         options.setTinyFormatOnLoading($(e.target).prop('checked'));
     });
 
@@ -58,7 +101,7 @@ function initOptions() {
 
     ///////////////////////////////
 
-    var summernoteFormatOnLoading = $('#summernote_format_on_loading').on('change', (e)=>{
+    var summernoteFormatOnLoading = $('#summernote_format_on_loading').on('change', (e)=> {
         options.setSummernoteFormatOnLoading($(e.target).prop('checked'));
     });
 
