@@ -18,7 +18,7 @@ const SUPPORTED_LANGUAGES = [
     },
     {
         name: 'C/C++',
-        slug: 'cpp',
+        slug: 'c_cpp',
         enabled: true
     },
     {
