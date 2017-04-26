@@ -5,6 +5,9 @@ var gulp = require('gulp'),
     uglify = require('gulp-uglify'),
     rigger = require('gulp-rigger'),
     cleanCSS = require('gulp-clean-css'),
+    gPpostcss = require("gulp-postcss"),
+    precss = require("precss"),
+    nesting = require('postcss-nesting'),
     minifyHTML = require('gulp-minify-html'),
     imagemin = require('gulp-imagemin'),
     imageminPng = require('imagemin-pngquant'),
@@ -43,7 +46,7 @@ var path = {
         root: 'src/',
         html: 'src/*.html',
         js: 'src/js/main.js',
-        style: 'src/css/*.css',
+        style: ['src/css/*.css', 'src/css/*.scss'],
         img: 'src/img/**/*.*',
         fonts: 'src/fonts/**/*.*',
         php: 'src/scripts/**/*.*'
@@ -53,7 +56,7 @@ var path = {
         html: 'src/**/*.html',
         js: 'src/js/**/*.js',
         markdown: 'src/**/*.markdown',
-        style: 'src/css/**/*.css',
+        style: ['src/css/**/*.css', 'src/css/**/*.scss'],
         img: 'src/img/**/*.*',
         fonts: 'src/fonts/**/*.*',
         php: 'src/scripts/**/*.*'
@@ -135,11 +138,15 @@ gulp.task('js:build', ['jekyll:build'], function () {
 });
 
 gulp.task('style:build', function () {
+    var processors = [
+        precss({"lookup": false}),
+        nesting,
+        autoprefixer({remove: false, browsers: ['> 2%']}),
+        cssnano()
+    ];
+
     return gulp.src(path.src.style)
-        .pipe(postcss([autoprefixer({
-            remove: false,
-            browsers: ['> 2%']
-        }), cssnano()]))
+        .pipe(postcss(processors))
         .pipe(concat('styles.min.css'))
         .pipe(gulp.dest(path.build.css))
         .pipe(reload({stream: true}));

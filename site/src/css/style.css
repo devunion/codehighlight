@@ -11,21 +11,22 @@
 	z-index: 5;
 }
 
-.flow-text {
-	font-size: 20px;
-	color: #333;
-	line-height: 1.6;
-	margin-bottom: 50px;
-	margin-left: 75px;
-	margin-right: 75px;
-}
-
 .shortcut {
 	color: #900;
 	font-weight: bold;
 	border: 1px solid #900;
 	border-radius: 3px;
 	padding: 2px 4px;
+}
+
+.plugin-info {
+	border: 1px solid #ebebeb;
+}
+.plugin-info td {
+	padding: 5px 10px;
+}
+.plugin-info td:last-child {
+	font-weight: bold;
 }
 
 /***************** The same height columns *****************/
@@ -904,7 +905,7 @@ h2.sub-title,
 h3.sub-title,
 h4.sub-title {
 	color: #00c0ff;
-	margin: 0 0 60px 0;
+	margin: 0 60px 60px 0;
 }
 
 .bg-color2 .sub-title{
@@ -2583,11 +2584,8 @@ h2 {
 	margin: 0 0 30px;
 }
 
-.post .post-content .title {
+.time-line .post-content .title {
 	margin: 0 0 40px 0;
-}
-.post .post-content h4:first-child{
-	margin-top:0;
 }
 
 .post .post-desc {
@@ -2784,25 +2782,6 @@ ul.posts-line .post .title {
 	padding: 100px 0;
 }
 
-.post figure {
-	display: table;
-	clear: both;
-	text-align: center;
-	margin: 20px auto;
-	padding: 8px;
-	border: 1px solid #ebebeb;
-	box-shadow: 0px 1px 5px #ebebeb;
-}
-.post figure img {
-	border: 1px solid #ebebeb;
-}
-
-.post figure figcaption {
-	margin: 7px 0 2px 0;
-	display: block;
-	color: #555;
-}
-
 .post ul.urls-list {
 	margin-left: 30px;
 	margin-bottom: 10px;
@@ -2821,32 +2800,6 @@ ul.posts-line .post .title {
 
 .post-list .title {
 	font-size: 35px;
-}
-
-.single-post .post-content {
-	padding: 40px 0;
-}
-
-.single-post .title {
-	margin-bottom: 40px;
-}
-
-.single-post .post-info {
-	margin-bottom: 40px;
-}
-
-.single-post .post-media {
-	padding: 0;
-}
-
-.single-post .post-info > * {
-	display: inline-block;
-	padding: 0 20px 0 0;
-	opacity: 0.4;
-}
-
-.single-post h2 {
-	margin-top: 30px;
 }
 
 .post-pagination li {
