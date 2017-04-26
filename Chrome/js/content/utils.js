@@ -30,12 +30,11 @@ function getAceTheme(theme) {
         theme = 'monokai';
     } else if (theme == 'light') {
         theme = 'github';
-    } else {
+    } else if ($.trim(theme) == "") {
         theme = 'monokai';
     }
     return theme;
 }
-
 
 function loadScript(src, callback) {
     chrome.runtime.sendMessage({action: 'inject_script', src: src}, callback);

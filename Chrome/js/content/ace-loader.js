@@ -86,65 +86,31 @@ class SitesSupport {
 
     detach() {
         if (this.attached) {
-            $('#'+this.styleId).remove();
+            $('#' + this.styleId).remove();
         }
     }
 
     injectStyle(file) {
-        $('head').append($('<link>', {id: this.styleId, rel: 'stylesheet', type: 'text/css', href: chrome.extension.getURL(file)}));
+        $('head').append($('<link>', {
+            id: this.styleId,
+            rel: 'stylesheet',
+            type: 'text/css',
+            href: chrome.extension.getURL(file)
+        }));
     }
 }
 var sitesSupport = new SitesSupport();
 
-class CodeEditorButton {
-    constructor(editor, editorXPath, syntax, theme) {
-        this.TOOLTIP_SAVE = 'Remember settings for this editor';
-        this.TOOLTIP_REMOVE = 'Forget settings for this editor';
 
-        this.doSave = true;
 
-        // var offset = editor.offset();
-        // var height = editor.height();
-        // var width = editor.width();
+class EditorButton {
+    constructor(aceEditor, initialTooltip) {
+        this.aceEditor = aceEditor;
 
-        this.editorXPath = editorXPath;
-        this.$button = $('<div>', {
-            'class': 'ch-save-editor-settings',
-            'title': this.TOOLTIP_SAVE
-        }).css({
-            bottom: '2px',
-            right: '2px'
-            // top: (offset.top + height - 32) + 'px',
-            // left: (offset.left + width - 32) + 'px'
-        }).click((e) => {
-            this.updateButtonState();
-
-            if (this.doSave) {
-                var pattern = CodeEditorButton.promptPattern();
-                if (!pattern) {
-                    return;
-                }
-
-                savedEditors.saveEditorState(this.editorXPath, {
-                    pattern: pattern,
-                    syntax: syntax,
-                    theme: theme,
-                });
-            } else {
-                savedEditors.removeSavedEditor(this.editorXPath);
-            }
-
-            this.doSave = !this.doSave;
-        });
-
-        if (savedEditors.hasSavedState(this.editorXPath)) {
-            this.updateButtonState();
-            this.doSave = !this.doSave;
-        }
-    }
-
-    updateButtonState() {
-        this.$button.toggleClass('discard').attr('title', this.doSave ? this.TOOLTIP_REMOVE : this.TOOLTIP_SAVE);
+        this.$button = this
+            ._createButton()
+            .attr('title', initialTooltip)
+            .click(this._buttonClick.bind(this));
     }
 
     appendTo(el) {
@@ -153,6 +119,102 @@ class CodeEditorButton {
 
     remove() {
         this.$button.remove();
+    }
+}
+
+class EditorSettingsButton extends EditorButton  {
+    constructor(aceEditor) {
+        super(aceEditor, 'Change settings of the current editor');
+    }
+
+    _createButton() {
+        return $('<div>', {
+            'class': 'ch-editor-button ch-active-editor-settings',
+        }).css({
+            top: '2px',
+            right: '2px'
+        });
+    }
+
+    _buttonClick() {
+        this.aceEditor.execCommand("showSettingsMenu");
+    }
+}
+
+class CodeEditorButton extends EditorButton {
+    /**
+     * @return {string}
+     */
+    static TOOLTIP_SAVE() {
+        return 'Remember settings for this editor';
+    }
+
+    /**
+     * @return {string}
+     */
+    static TOOLTIP_REMOVE() {
+        return 'Forget settings for this editor';
+    }
+
+    constructor(aceEditor, editorXPath) {
+        super(aceEditor, CodeEditorButton.TOOLTIP_SAVE());
+
+        this.doSave = true;
+
+        this.editorXPath = editorXPath;
+
+        if (savedEditors.hasSavedState(this.editorXPath)) {
+            this.updateButtonState();
+            this.doSave = !this.doSave;
+        }
+    }
+
+    _createButton() {
+        return $('<div>', {
+            'class': 'ch-editor-button ch-save-editor-settings',
+        }).css({
+            bottom: '2px',
+            right: '2px'
+        });
+    }
+
+    _buttonClick() {
+        if (this.doSave) {
+            var pattern = CodeEditorButton.promptPattern();
+            if (!pattern) {
+                return;
+            }
+
+            this.updateButtonState();
+
+            savedEditors.saveEditorState(this.editorXPath, {
+                pattern: pattern,
+                syntax: this._getCurrentSyntax(),
+                theme: this._getCurrentTheme(),
+            });
+        } else {
+            this.updateButtonState();
+
+            savedEditors.removeSavedEditor(this.editorXPath);
+        }
+
+        this.doSave = !this.doSave;
+    }
+
+    _getCurrentSyntax() {
+        return this.aceEditor.getSession().getMode()['$id'].replace('ace/mode/', '');
+    }
+
+    _getCurrentTheme() {
+        return this.aceEditor.getTheme().replace('ace/theme/', '');
+    }
+
+    _getToolTip() {
+        return this.doSave ? CodeEditorButton.TOOLTIP_REMOVE() : CodeEditorButton.TOOLTIP_SAVE()
+    }
+
+    updateButtonState() {
+        this.$button.toggleClass('discard').attr('title', this._getToolTip());
     }
 
     static promptPattern() {
@@ -265,7 +327,9 @@ class CodeEditor {
             this._activeEditor.hideContainer();
 
             this.addCodeEditor(syntax, theme);
-            this.addSaveButton(syntax, theme);
+
+            this.addSaveButton();
+            this.addSettingsButton();
 
             this.aceEditor.focus();
         }.bind(this));
@@ -282,6 +346,21 @@ class CodeEditor {
         this.aceEditor.setTheme("ace/theme/" + theme);
         this.aceEditor.getSession().setMode("ace/mode/" + syntax);
 
+        this.aceEditor.setOption("enableEmmet", true);
+
+        // add command to lazy-load keybinding_menu extension
+        // this.aceEditor.commands.addCommand({
+        //     name: "showKeyboardShortcuts",
+        //     bindKey: {win: "Ctrl-Alt-h", mac: "Command-Alt-h"},
+        //     exec: function(editor) {
+        //         window.ace.config.loadModule("ace/ext/keybinding_menu", function(module) {
+        //             module.init(editor);
+        //             editor.showKeyboardShortcuts()
+        //         })
+        //     }
+        // });
+        // this.aceEditor.execCommand("showKeyboardShortcuts");
+
         this.addStateSync();
     }
 
@@ -290,8 +369,13 @@ class CodeEditor {
         // this.aceEditor.setValue(value);
     }
 
-    addSaveButton(syntax, theme) {
-        this.saveButton = new CodeEditorButton(this.$editor, this.realEditorXPath, syntax, theme);
+    addSettingsButton() {
+        this.settingsButton = new EditorSettingsButton(this.aceEditor);
+        this.settingsButton.appendTo(this.$editor);
+    }
+
+    addSaveButton() {
+        this.saveButton = new CodeEditorButton(this.aceEditor, this.realEditorXPath);
         this.saveButton.appendTo(this.$editor);
     }
 
@@ -371,7 +455,7 @@ class TinyMceApi {
         window.dispatchEvent(new CustomEvent(this.EVENT_NAME, {
             detail: {
                 action: action,
-                data : data
+                data: data
             }
         }));
     }
@@ -410,10 +494,16 @@ class EditorTypesSupport {
             {
                 description: 'WordPress Page/Post code editor',
                 type: 'wp-post-page-code',
-                isEditor: function ($el) {return this.getContainer($el).length > 0 && $el.hasClass('wp-editor-area')},
-                getContainer: ($el) => {return $el.parents('#postdivrich')},
+                isEditor: function ($el) {
+                    return this.getContainer($el).length > 0 && $el.hasClass('wp-editor-area')
+                },
+                getContainer: ($el) => {
+                    return $el.parents('#postdivrich')
+                },
                 getText: $el => $el.val(),
-                setText: ($el, val) => {$el.val(val)},
+                setText: ($el, val) => {
+                    $el.val(val)
+                },
                 css: {
                     marginTop: '20px'
                 }
@@ -421,12 +511,24 @@ class EditorTypesSupport {
             {
                 description: 'WordPress Page/Post rich editor',
                 type: 'wp-post-page-rich',
-                isEditor: function ($el) {return this.getContainer($el).length > 0 && $el.attr('id') == 'content_ifr'},
-                getContainer: ($el) => {return $el.parents('#postdivrich')},
+                isEditor: function ($el) {
+                    return this.getContainer($el).length > 0 && $el.attr('id') == 'content_ifr'
+                },
+                getContainer: ($el) => {
+                    return $el.parents('#postdivrich')
+                },
                 getText: $el => $('.wp-editor-area').val(),
-                setText: ($el, val) => {TinyMceApi.get().setText(val)},
-                hideContainer: (container) => {container.addClass('hidden'); TinyMceApi.get().hide()},
-                showContainer: (container) => {container.removeClass('hidden'); TinyMceApi.get().show()},
+                setText: ($el, val) => {
+                    TinyMceApi.get().setText(val)
+                },
+                hideContainer: (container) => {
+                    container.addClass('hidden');
+                    TinyMceApi.get().hide()
+                },
+                showContainer: (container) => {
+                    container.removeClass('hidden');
+                    TinyMceApi.get().show()
+                },
                 css: {
                     marginTop: '20px'
                 }
@@ -434,42 +536,72 @@ class EditorTypesSupport {
             {
                 description: 'TinyMce popup editor',
                 type: 'tinymce-code',
-                isEditor: function ($el) {return $el.hasClass('mce-textbox')},
-                getContainer: ($el) => {return $el.parents('.mce-container-body').filter(':last')},
+                isEditor: function ($el) {
+                    return $el.hasClass('mce-textbox')
+                },
+                getContainer: ($el) => {
+                    return $el.parents('.mce-container-body').filter(':last')
+                },
                 getText: $el => $el.val(),
-                setText: ($el, val) => {$el.val(val)}
+                setText: ($el, val) => {
+                    $el.val(val)
+                }
             },
             {
                 description: 'TinyMce inline editor',
                 type: 'tinymce',
-                isEditor: function ($el) {return this.getContainer($el).length > 0},
-                getContainer: ($el) => {return $el.parents('.mce-tinymce')},
+                isEditor: function ($el) {
+                    return this.getContainer($el).length > 0
+                },
+                getContainer: ($el) => {
+                    return $el.parents('.mce-tinymce')
+                },
                 getText: $el => $el.val(),
-                setText: ($el, val) => {$el.val(val)}
+                setText: ($el, val) => {
+                    $el.val(val)
+                }
             },
             {
                 description: 'Summernote editable area',
                 type: 'summernote-editable',
-                isEditor: function ($el) {return $el.hasClass('note-editable')},
-                getContainer: ($el) => {return $el.parents('.note-editor')},
+                isEditor: function ($el) {
+                    return $el.hasClass('note-editable')
+                },
+                getContainer: ($el) => {
+                    return $el.parents('.note-editor')
+                },
                 getText: $el => $el.html(),
-                setText: ($el, val) => {$el.html(val)}
+                setText: ($el, val) => {
+                    $el.html(val)
+                }
             },
             {
                 description: 'Summernote codable area',
                 type: 'summernote-codable',
-                isEditor: function ($el) {return $el.hasClass('note-codable')},
-                getContainer: ($el) => {return $el.parents('.note-editor')},
+                isEditor: function ($el) {
+                    return $el.hasClass('note-codable')
+                },
+                getContainer: ($el) => {
+                    return $el.parents('.note-editor')
+                },
                 getText: $el => $el.val(),
-                setText: ($el, val) => {$el.val(val)}
+                setText: ($el, val) => {
+                    $el.val(val)
+                }
             },
             {
                 description: 'Default text editor',
                 type: 'plain',
-                isEditor: function ($el) {return true},
-                getContainer: ($el) => {return $el},
+                isEditor: function ($el) {
+                    return true
+                },
+                getContainer: ($el) => {
+                    return $el
+                },
                 getText: $el => $el.val(),
-                setText: ($el, val) => {$el.val(val)}
+                setText: ($el, val) => {
+                    $el.val(val)
+                }
             }
         ];
     }
@@ -586,17 +718,21 @@ class CodeEditorManager {
 
 var editorSupport = new CodeEditorManager();
 
-loadScript(CDN_JS_ACE, function () {
-    window.ace.config.set('workerPath', CDN_JS_ACE_ROOT);
-    window.ace.require('./lib/net').loadScript = function (path, callback) {
-        if (path.indexOf('http') == 0) {
-            loadScript(path, callback);
-        } else {
-            loadScript(CDN_JS_ACE_ROOT + path, callback);
-        }
-    };
+loadScript(EMMET_CORE, function () {
+    loadScript(CDN_JS_ACE, function () {
+        loadScript(CDN_JS_ACE_EMMET, function () {
+            window.ace.config.set('workerPath', CDN_JS_ACE_ROOT);
+            window.ace.require('./lib/net').loadScript = function (path, callback) {
+                if (path.indexOf('http') == 0) {
+                    loadScript(path, callback);
+                } else {
+                    loadScript(CDN_JS_ACE_ROOT + path, callback);
+                }
+            };
 
-    savedEditors.restoreSavedEditors();
+            savedEditors.restoreSavedEditors();
+        });
+    });
 });
 
 $(document).on('mousedown', 'div.ace_content', function (e) {
