@@ -522,11 +522,11 @@ class EditorTypesSupport {
                     TinyMceApi.get().setText(val)
                 },
                 hideContainer: (container) => {
-                    container.addClass('hidden');
+                    container.addClass('ch-hidden');
                     TinyMceApi.get().hide()
                 },
                 showContainer: (container) => {
-                    container.removeClass('hidden');
+                    container.removeClass('ch-hidden');
                     TinyMceApi.get().show()
                 },
                 css: {
@@ -635,7 +635,7 @@ class ActiveEditor {
         if (this._editor.hideContainer) {
             this._editor.hideContainer(this.container);
         } else {
-            this.container.addClass('hidden');
+            this.container.addClass('ch-hidden');
         }
     }
 
@@ -643,7 +643,7 @@ class ActiveEditor {
         if (this._editor.showContainer) {
             this._editor.showContainer(this.container);
         } else {
-            this.container.removeClass('hidden');
+            this.container.removeClass('ch-hidden');
         }
     }
 

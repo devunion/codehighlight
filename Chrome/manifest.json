@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "CodeHighlight - edit sources everywhere",
-  "version": "1.3.9",
+  "version": "1.3.11",
   "icons": {
     "16": "img/16.png",
     "19": "img/19.png",

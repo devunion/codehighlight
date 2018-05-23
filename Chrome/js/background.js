@@ -1,5 +1,5 @@
 
-var URL_FEEDBACK = 'http://codehighlight.com/scripts/feedback.php';
+var URL_FEEDBACK = 'https://codehighlight.com/scripts/feedback.php';
 var URL_UNINSTALL = 'http://codehighlight.idea.informer.com/proj/?mod=one';
 
 import * as menu from 'js/menu.js';
